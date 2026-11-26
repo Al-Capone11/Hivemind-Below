@@ -815,12 +815,11 @@ para distribución.
 
 ## 13.1 Objetivo
 
-El proyecto debe soportar dos loaders:
+La matriz mantiene Fabric y un segundo cargador por versión. El segundo
+cargador es NeoForge en 26.3, 26.2 y 1.21.1, y Forge mediante LegacyForge
+en 1.20.1.
 
-1.  Fabric.
-2.  NeoForge.
-
-Y cuatro versiones de Minecraft:
+Las versiones de Minecraft son:
 
 1.  26.3.
 2.  26.2.
@@ -832,115 +831,35 @@ forzar a que todas las versiones utilicen exactamente las mismas
 implementaciones cuando las API o los sistemas internos de Minecraft
 sean diferentes.
 
-## 13.2 Estructura de carpetas solicitada
+## 13.2 Estructura del espacio de trabajo
 
-La carpeta madre del proyecto debe organizar el núcleo común y las
-cuatro versiones:
+La carpeta madre de Hivemind contiene un único repositorio Git bare, un
+worktree por versión mantenida y el `CONTEXT.md` local.
 
-``` text
-NombreDelProyecto/
-├── Core/
-├── 26.3/
-├── 26.2/
-├── 1.21.1/
-└── 1.20.1/
+```text
+Hivemind/
+├── CONTEXT.md
+├── .bare/
+├── Hivemind - 26.3/       [main]
+├── Hivemind - 26.2/       [26.2]
+├── Hivemind - 1.21.1/     [1.21.1]
+└── Hivemind - 1.20.1/    [1.20.1]
 ```
 
-Cada carpeta de versión corresponde a su propia línea de desarrollo y a
-su respectivo branch de GitHub.
+Cada rama contiene `fabric/`, `neoforge/` y `Core/` en su raíz, junto con
+el wrapper de Gradle, `build-version.ps1` y la comprobación del núcleo.
+En 1.20.1, el módulo `neoforge/` usa LegacyForge y produce un JAR para Forge.
 
-Dentro de cada versión se deben separar las implementaciones de Fabric y
-NeoForge:
+## 13.3 Núcleo compartido
 
-``` text
-26.3/
-├── fabric/
-└── neoforge/
+`Core/` contiene la lógica común y está versionado dentro de cada rama.
+Ambos loaders incorporan las fuentes de la copia de su propio worktree.
+Cada rama puede compilar sus dos loaders con los archivos del checkout.
 
-26.2/
-├── fabric/
-└── neoforge/
-
-1.21.1/
-├── fabric/
-└── neoforge/
-
-1.20.1/
-├── fabric/
-└── neoforge/
-```
-
-Esta es la estructura lógica esperada. Los archivos de Gradle,
-metadatos, recursos y código específico se organizan según las
-necesidades reales de cada versión y loader.
-
-## 13.3 Aclaración importante sobre Git branches
-
-En Git, un branch representa una línea completa de historial del
-repositorio, no una carpeta dentro del repositorio.
-
-Por tanto, si se quiere que cada carpeta de versión sea realmente una
-copia de trabajo de su branch, la forma adecuada es utilizar **Git
-worktrees** o clones independientes.
-
-Una carpeta no se convierte automáticamente en un branch por tener el
-mismo nombre.
-
-### Modelo recomendado de workspace
-
-La carpeta madre funciona como un espacio de trabajo que agrupa:
-
--   El núcleo común.
--   Una copia de trabajo de cada branch de versión.
--   Las implementaciones Fabric y NeoForge dentro de cada versión.
-
-Ejemplo conceptual:
-
-``` text
-NombreDelProyecto/
-├── Core/                 # Núcleo común, gestionado de forma independiente
-├── 26.3/                 # Worktree del branch 26.3
-│   ├── fabric/
-│   └── neoforge/
-├── 26.2/                 # Worktree del branch 26.2
-│   ├── fabric/
-│   └── neoforge/
-├── 1.21.1/               # Worktree del branch 1.21.1
-│   ├── fabric/
-│   └── neoforge/
-└── 1.20.1/               # Worktree del branch 1.20.1
-    ├── fabric/
-    └── neoforge/
-```
-
-**Importante:** Git worktrees de un mismo repositorio no permiten
-compartir simultáneamente una misma carpeta de archivos versionados
-entre todos los branches. Por ello, el núcleo común debe gestionarse
-como un componente independiente o integrarse en cada branch mediante un
-mecanismo explícito.
-
-### Gestión recomendada del núcleo común
-
-La opción recomendada es que `Core/` sea un repositorio Git
-independiente, con su propio historial y versiones.
-
-Cada branch de Minecraft consume una versión concreta del núcleo
-mediante un mecanismo de integración de Gradle, como un subproyecto, un
-composite build o una dependencia versionada.
-
-Esto permite:
-
--   Mantener una sola fuente de verdad para la lógica compartida.
--   Evitar copiar y pegar cambios entre cuatro versiones.
--   Controlar qué versión del núcleo utiliza cada versión de Minecraft.
--   Actualizar el núcleo sin obligar a migrar simultáneamente todos los
-    branches.
--   Mantener las diferencias de API dentro de adaptadores específicos.
-
-Si el núcleo necesita compilar directamente contra clases o API de
-Minecraft, debe diseñarse con interfaces y módulos de adaptación. No se
-debe asumir que una única compilación del núcleo será compatible con
-todas las versiones.
+La comprobación del núcleo usa `verify-core.ps1`. Para compilar el par de
+una rama, usa `build-version.ps1 -Version 0.1.0` desde su raíz.
+`main` también contiene el orquestador `build-all.ps1` y el único
+`beta-sequence.txt` para coordinar la matriz de las ocho variantes.
 
 ## 13.4 Responsabilidad de cada capa
 
@@ -987,9 +906,9 @@ Contiene exclusivamente la integración con Fabric:
 -   Configuración de Fabric.
 -   Dependencias y metadatos del loader.
 
-### Módulo NeoForge
+### Módulo NeoForge y excepción Forge 1.20.1
 
-Contiene exclusivamente la integración con NeoForge:
+Contiene la integración con NeoForge en 26.3, 26.2 y 1.21.1. En 1.20.1 contiene la integración con Forge mediante LegacyForge. Sus responsabilidades son:
 
 -   Inicializadores.
 -   Registro mediante API de NeoForge.
@@ -1024,21 +943,19 @@ independiente posible de esas diferencias.
 
 # 14. Convenciones de Git y GitHub
 
-## 14.1 Branches de versión
+## 14.1 Ramas de versión
 
-Utilizar un branch estable por versión:
+| Rama | Minecraft | Cargadores |
+| --- | --- | --- |
+| `main` | 26.3 | Fabric y NeoForge |
+| `26.2` | 26.2 | Fabric y NeoForge |
+| `1.21.1` | 1.21.1 | Fabric y NeoForge |
+| `1.20.1` | 1.20.1 | Fabric y Forge vía LegacyForge |
 
-``` text
-26.3
-26.2
-1.21.1
-1.20.1
-```
-
-Cada branch contiene la integración completa de esa versión, incluyendo
-sus módulos Fabric y NeoForge.
-
-El branch no debe contener cambios exclusivos de otra versión.
+`main` es la rama predeterminada. Cada línea estable avanza desde el
+historial existente. El tag `v0.1.0` identifica la instantánea original
+del lanzamiento. Conserva ese tag y publica la reorganización de
+`main` como avance normal desde el commit original.
 
 ## 14.2 Trabajo diario
 
@@ -1046,7 +963,7 @@ Antes de comenzar:
 
 1.  Confirmar en qué carpeta y branch se está trabajando.
 2.  Consultar el estado de Git.
-3.  Actualizar el branch correspondiente.
+3.  Si hay que sincronizar, revisar primero el remoto y los cambios locales.
 4.  Revisar los cambios pendientes.
 5.  Trabajar únicamente en la versión prevista, salvo que la tarea
     requiera modificar el núcleo común.
@@ -1108,21 +1025,10 @@ eliminar la rama temporal si ya no es necesaria.
 
 ## 14.5 Sincronización del núcleo
 
-El núcleo debe tener su propio control de versiones.
-
-Cada branch de Minecraft debe registrar qué versión o commit del núcleo
-utiliza. No se deben introducir cambios en el núcleo sin comprobar qué
-versiones consumidoras podrían verse afectadas.
-
-Cuando un cambio del núcleo sea necesario:
-
-1.  Modificar y probar `Core/`.
-2.  Crear un commit.
-3.  Publicar o identificar la versión/commit del núcleo.
-4.  Actualizar primero una versión de Minecraft.
-5.  Compilar y probar Fabric y NeoForge.
-6.  Repetir la integración en los demás branches.
-7.  Registrar cualquier adaptación específica.
+Desarrolla y prueba los cambios en `Core/` en la línea correspondiente.
+Aplica los cambios compartidos en cada rama afectada y comprueba la
+paridad del núcleo. Verifica los dos loaders de cada rama y registra
+las adaptaciones de API y las diferencias deliberadas en las variantes.
 
 ------------------------------------------------------------------------
 
