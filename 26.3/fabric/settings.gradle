@@ -1,8 +1,0 @@
-pluginManagement {
-    repositories {
-        maven { url = 'https://maven.fabricmc.net/' }
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-rootProject.name = 'hivemind-26.3-fabric'

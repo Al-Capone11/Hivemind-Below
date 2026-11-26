@@ -1,9 +1,9 @@
-// Packaging must go through build-beta.ps1 to keep the artifact version coordinated across all targets.
+// Packaging must go through build-version.ps1 so both loaders use the assigned version.
 gradle.taskGraph.whenReady { graph ->
     def packaged = graph.allTasks.any { task ->
         task.project == project && task.name in ['jar', 'sourcesJar', 'remapJar', 'remapSourcesJar', 'reobfJar']
     }
     if (packaged && project.findProperty('hivemindBetaAssigned') != project.version.toString()) {
-        throw new GradleException('Usa build-beta.ps1 o build-all.ps1 para asignar la versión antes de generar JAR.')
+        throw new GradleException('Usa build-version.ps1 -Version para asignar la versión antes de generar JAR.')
     }
 }
