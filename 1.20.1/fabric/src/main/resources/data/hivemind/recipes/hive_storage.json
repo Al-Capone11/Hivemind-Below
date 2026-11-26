@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CCC",
+    "C C",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "hivemind:hive_chitin"
+    }
+  },
+  "result": {
+    "item": "hivemind:hive_storage",
+    "count": 1
+  }
+}

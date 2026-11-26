@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "hivemind",
+  "version": "${version}",
+  "name": "Hivemind",
+  "description": "Colonias subterráneas con castas, memoria compartida y respuestas adaptativas.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hivemind.fabric.HivemindFabric"
+    ],
+    "client": [
+      "com.hivemind.fabric.client.HivemindClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "mixins": [
+    "hivemind.mixins.json"
+  ]
+}

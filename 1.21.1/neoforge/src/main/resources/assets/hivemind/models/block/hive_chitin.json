@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "all": "hivemind:block/hive_chitin_periodic"
+  },
+  "parent": "minecraft:block/cube_all"
+}

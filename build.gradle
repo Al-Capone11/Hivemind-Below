@@ -1,0 +1,9 @@
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Build all Fabric and NeoForge versions using build-all.ps1.'
+    doLast {
+        exec {
+            commandLine 'powershell', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', file('build-all.ps1')
+        }
+    }
+}

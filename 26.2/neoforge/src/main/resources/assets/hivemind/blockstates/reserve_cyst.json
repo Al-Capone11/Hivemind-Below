@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "hivemind:block/reserve_cyst"
+    }
+  }
+}
