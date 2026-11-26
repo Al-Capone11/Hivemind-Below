@@ -2,13 +2,7 @@
 
 Mod de colonias subterráneas para Minecraft. Instala el mismo JAR en el cliente y en el servidor dedicado cuando juegues en multijugador.
 
-| Minecraft | Cargadores | JDK de compilación |
-| --- | --- | --- |
-| 26.3 y 26.2 | Fabric con Fabric API, NeoForge | 25 |
-| 1.21.1 | Fabric con Fabric API, NeoForge | 21 |
-| 1.20.1 | Fabric con Fabric API, Forge | 21 |
-
-El JAR de Forge para 1.20.1 se construye con LegacyForge 47.1.106. Por compatibilidad con el árbol del proyecto, la carpeta y el sufijo de esa variante se llaman `neoforge`.
+Esta rama corresponde a **Minecraft 26.3**. Los cargadores son Fabric con Fabric API y NeoForge. El JDK de compilación es 25.
 
 ## Uso y colmenas
 
@@ -60,4 +54,6 @@ Las tareas y el mantenimiento se ejecutan cuando la colonia está cargada. El co
 
 ## Compilación
 
-Ejecuta `./build-all.ps1 -Release` para comprobar el núcleo y compilar las ocho variantes de la versión estable `0.1.0`. El sufijo posterior a `+` identifica la versión de Minecraft y el cargador. Los JAR se crean en `version/loader/build/libs/`. Para probar el desarrollo, `./build-all.ps1` reserva una nueva `0.1.0-betaN` para toda la matriz después de comprobar el núcleo.
+Ejecuta `./build-version.ps1 -Version 0.1.0` desde la raíz de la rama. El script comprueba `Core/` y compila ambos loaders con el wrapper incluido. Para indicar otro número de compilación, pasa la versión asignada con `-Version`. Los JAR quedan en `fabric/build/libs/` y `neoforge/build/libs/`. Los archivos `-sources.jar` contienen el código fuente.
+
+En el espacio de trabajo con los cuatro worktrees, `./build-all.ps1 -Release` compila la matriz completa con la versión estable. Sin `-Release`, reserva un solo número beta en `beta-sequence.txt` de `main` y lo asigna a las ocho variantes. Puedes indicar la carpeta madre con `-Workspace`. `./gradlew.bat buildAll -Prelease` es el punto de entrada equivalente para la versión estable.

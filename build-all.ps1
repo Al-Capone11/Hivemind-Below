@@ -1,22 +1,42 @@
-param([switch]$Release)
+[CmdletBinding()]
+param(
+    [switch]$Release,
 
-$ErrorActionPreference = 'Stop'
-& (Join-Path $PSScriptRoot 'verify-core.ps1')
-$builds = @(
-    @{ Minecraft = '26.3'; Loader = 'fabric' },
-    @{ Minecraft = '26.3'; Loader = 'neoforge' },
-    @{ Minecraft = '26.2'; Loader = 'fabric' },
-    @{ Minecraft = '26.2'; Loader = 'neoforge' },
-    @{ Minecraft = '1.21.1'; Loader = 'fabric' },
-    @{ Minecraft = '1.21.1'; Loader = 'neoforge' },
-    @{ Minecraft = '1.20.1'; Loader = 'fabric' },
-    @{ Minecraft = '1.20.1'; Loader = 'neoforge' }
+    [string]$Workspace = (Split-Path -Parent $PSScriptRoot),
+
+    [string]$GradleUserHome
 )
 
-if ($Release) {
-    $env:HIVEMIND_BATCH_BETA = 'release'
-} else {
-    $counterPath = Join-Path $PSScriptRoot 'beta-sequence.txt'
+$ErrorActionPreference = 'Stop'
+$workspacePath = (Resolve-Path -LiteralPath $Workspace).Path
+if (!$GradleUserHome) { $GradleUserHome = Join-Path $workspacePath '.gradle-home' }
+$GradleUserHome = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($GradleUserHome)
+$versions = @('26.3', '26.2', '1.21.1', '1.20.1')
+$worktrees = @{}
+foreach ($minecraft in $versions) {
+    $worktree = Join-Path $workspacePath "Hivemind - $minecraft"
+    foreach ($path in @('build-version.ps1', 'verify-core.ps1', 'fabric/gradle.properties', 'neoforge/gradle.properties')) {
+        if (!(Test-Path -LiteralPath (Join-Path $worktree $path) -PathType Leaf)) {
+            throw "Falta $path en $worktree."
+        }
+    }
+    foreach ($loader in 'fabric', 'neoforge') {
+        $metadata = [IO.File]::ReadAllText((Join-Path $worktree "$loader/gradle.properties"))
+        if ($metadata -notmatch "(?m)^minecraft_version=$([regex]::Escape($minecraft))\s*$") {
+            throw "La variante $loader de $worktree no declara Minecraft $minecraft."
+        }
+    }
+    $worktrees[$minecraft] = $worktree
+}
+
+foreach ($minecraft in $versions) {
+    Write-Host "Comprobando el núcleo de Minecraft $minecraft"
+    & (Join-Path $worktrees[$minecraft] 'verify-core.ps1')
+}
+
+$version = '0.1.0'
+if (!$Release) {
+    $counterPath = Join-Path $worktrees['26.3'] 'beta-sequence.txt'
     $counter = [IO.File]::Open($counterPath, [IO.FileMode]::Open, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
     try {
         $bytes = New-Object byte[] ([int]$counter.Length)
@@ -29,23 +49,20 @@ if ($Release) {
         $counter.SetLength(0)
         $counter.Write($encoded, 0, $encoded.Length)
         $counter.Flush($true)
-    } finally { $counter.Dispose() }
-    $env:HIVEMIND_BATCH_BETA = [string]$next
-}
-
-$failed = [System.Collections.Generic.List[string]]::new()
-foreach ($build in $builds) {
-    try {
-        $edition = if ($Release) { @{ Release = $true } } else { @{ Beta = $next } }
-        & (Join-Path $PSScriptRoot 'build-beta.ps1') -Minecraft $build.Minecraft -Loader $build.Loader @edition
-    } catch {
-        Write-Warning $_
-        $failed.Add("$($build.Minecraft)/$($build.Loader)")
+        $version = "0.1.0-beta$next"
+    } finally {
+        $counter.Dispose()
     }
 }
 
-Remove-Item Env:HIVEMIND_BATCH_BETA -ErrorAction SilentlyContinue
-if ($failed.Count -gt 0) {
-    throw "Fallaron estas compilaciones: $($failed -join ', ')"
+$failed = [System.Collections.Generic.List[string]]::new()
+foreach ($minecraft in $versions) {
+    try {
+        & (Join-Path $worktrees[$minecraft] 'build-version.ps1') -Version $version -GradleUserHome $GradleUserHome -SkipCoreChecks
+    } catch {
+        Write-Warning $_
+        $failed.Add($minecraft)
+    }
 }
-Write-Host 'Las ocho compilaciones terminaron correctamente.' -ForegroundColor Green
+if ($failed.Count -gt 0) { throw "Fallaron estas versiones de Minecraft: $($failed -join ', ')." }
+Write-Host "Las ocho variantes de Hivemind $version se compilaron correctamente." -ForegroundColor Green
