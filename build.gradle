@@ -1,9 +1,7 @@
-tasks.register('buildAll') {
+tasks.register('buildVersion', Exec) {
     group = 'build'
-    description = 'Build all Fabric and NeoForge versions using build-all.ps1.'
-    doLast {
-        exec {
-            commandLine 'powershell', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', file('build-all.ps1')
-        }
-    }
+    description = 'Build both loaders for this Minecraft version.'
+    workingDir projectDir
+    commandLine 'powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+        file('build-version.ps1'), '-Version', providers.gradleProperty('hivemindVersion').getOrElse('0.1.0')
 }
