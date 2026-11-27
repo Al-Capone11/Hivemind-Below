@@ -1,4 +1,4 @@
-# Hivemind
+# Hivemind Below
 
 Mod de colonias subterráneas para Minecraft. Instala el mismo JAR en el cliente y en el servidor dedicado cuando juegues en multijugador.
 
@@ -8,7 +8,7 @@ Esta rama corresponde a **Minecraft 1.20.1**. Los cargadores son Fabric con Fabr
 
 `/hivemind nest` crea una colmena al norte de la posición del jugador. Requiere permisos de operador y terreno cargado, despejado de entidades y bloques protegidos. El comando modifica el terreno. Las colmenas nuevas tienen galerías curvas y cavidades de distintas alturas. La entrada pasa por la zona de guardia. El almacén y el descanso quedan en ramales laterales. La reina, el núcleo y el panal comparten una cámara protegida al fondo.
 
-La **cápsula de almacenamiento** es un bloque propio con 27 espacios. Está en la pestaña creativa de Hivemind y se fabrica con ocho bloques de quitina alrededor de la casilla central vacía. En las colmenas guardadas, el barril de la sala de almacén se convierte en una cápsula y conserva su contenido. Los obreros pueden recoger carne suelta y quitina. Tras la caza, los guerreros intentan recoger la carne y llevarla a la cápsula. En un nido compacto, la entrega incrementa la reserva interna. Los obreros pueden retirar quitina para reparar las cámaras. La colonia puede convertir alimento sobrante en quitina. Si la cápsula se rompe o se descarga su chunk, los obreros conservan lo que transportan hasta que haya un almacén accesible.
+La **cápsula de almacenamiento** es un bloque propio con 27 espacios. Está en la pestaña creativa de Hivemind Below y se fabrica con ocho bloques de quitina alrededor de la casilla central vacía. En las colmenas guardadas, el barril de la sala de almacén se convierte en una cápsula y conserva su contenido. Los obreros pueden recoger carne suelta y quitina. Tras la caza, los guerreros intentan recoger la carne y llevarla a la cápsula. En un nido compacto, la entrega incrementa la reserva interna. Los obreros pueden retirar quitina para reparar las cámaras. La colonia puede convertir alimento sobrante en quitina. Si la cápsula se rompe o se descarga su chunk, los obreros conservan lo que transportan hasta que haya un almacén accesible.
 
 La reina se acerca al panal para poner y cuidar el huevo cuando hay alimento y plazas libres. Si se aleja o entra en combate durante el cuidado, se retrasa la incubación. Para eclosionar, la cría necesita que la reina esté cerca y que haya espacio. Los obreros se dedican a sus otras tareas. Los miembros heridos pueden dirigirse a los lechos de muda y los guerreros vigilan la entrada de día. Los exploradores reconocen el entorno y regresan con informes. Las criaturas creadas con huevos de aparición quedan sin colonia.
 

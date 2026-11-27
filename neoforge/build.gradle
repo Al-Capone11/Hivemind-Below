@@ -4,7 +4,7 @@ plugins {
 
 group = project.mod_group_id
 version = project.mod_version
-base.archivesName = 'hivemind-neoforge'
+base.archivesName = 'hivemind-below-forge'
 
 sourceSets.main.java.srcDir('../Core/src/main/java')
 

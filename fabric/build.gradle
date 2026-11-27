@@ -4,7 +4,7 @@ plugins {
 
 group = 'com.hivemind'
 version = project.mod_version
-base.archivesName = 'hivemind-fabric'
+base.archivesName = 'hivemind-below-fabric'
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
