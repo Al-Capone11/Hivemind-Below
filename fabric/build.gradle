@@ -2,8 +2,6 @@ plugins {
     id 'net.fabricmc.fabric-loom' version '1.19-SNAPSHOT'
 }
 
-apply from: '../beta-guard.gradle'
-
 group = 'com.hivemind'
 version = project.mod_version
 base.archivesName = 'hivemind-fabric'

@@ -54,6 +54,11 @@ Las tareas y el mantenimiento se ejecutan cuando la colonia está cargada. El co
 
 ## Compilación
 
-Ejecuta `./build-version.ps1 -Version 0.1.0` desde la raíz de la rama. El script comprueba `Core/` y compila ambos loaders con el wrapper incluido. Para indicar otro número de compilación, pasa la versión asignada con `-Version`. Los JAR quedan en `fabric/build/libs/` y `neoforge/build/libs/`. Los archivos `-sources.jar` contienen el código fuente.
+Con JDK 25, ejecuta cada comando desde la raíz de esta rama. En PowerShell, usa `.\gradlew.bat` en lugar de `./gradlew`.
 
-En el espacio de trabajo con los cuatro worktrees, `./build-all.ps1 -Release` compila la matriz completa con la versión estable. Sin `-Release`, reserva un solo número beta en `beta-sequence.txt` de `main` y lo asigna a las ocho variantes. Puedes indicar la carpeta madre con `-Workspace`. `./gradlew.bat buildAll -Prelease` es el punto de entrada equivalente para la versión estable.
+```sh
+./gradlew -p fabric build
+./gradlew -p neoforge build
+```
+
+Los JAR quedan en `fabric/build/libs/` y `neoforge/build/libs/`. Los archivos `-sources.jar` contienen el código fuente.
