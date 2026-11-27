@@ -3,6 +3,7 @@
   "id": "hivemind",
   "version": "${version}",
   "name": "Hivemind",
+  "icon": "assets/hivemind/icon.png",
   "description": "Colonias subterráneas con castas, memoria compartida y respuestas adaptativas.",
   "environment": "*",
   "entrypoints": {
