@@ -2,8 +2,6 @@ plugins {
     id 'net.fabricmc.fabric-loom-remap' version '1.14-SNAPSHOT'
 }
 
-apply from: '../beta-guard.gradle'
-
 group = 'com.hivemind'
 version = project.mod_version
 base.archivesName = 'hivemind-fabric'
