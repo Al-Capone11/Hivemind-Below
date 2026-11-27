@@ -6,6 +6,8 @@ license="All Rights Reserved"
 modId="hivemind"
 version="${version}"
 displayName="Hivemind"
+logoFile="hivemind-logo.png"
+logoBlur=false
 description='''Underground colonies with castes, collective memory, and adaptive responses.'''
 
 [[dependencies.hivemind]]
